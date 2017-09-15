@@ -15,7 +15,7 @@ socket.on('newMessage', function (message) {
     jQuery('#messages').append(li);
 });
 
-socket.on('newLocationMessage', function(message) {
+socket.on('newLocationMessage', function (message) {
     var li = jQuery('<li></li>');
     li.text(`${message.from}: `);
     var a = jQuery('<a target="_blank">My current location</a>');
@@ -40,13 +40,23 @@ locationButton.on('click', function () {
         return alert('Geolocation IS NOT available');
     }
     navigator.geolocation.getCurrentPosition(function (position) {
+        if(position.coords.accuracy > 50){
+            return alert('Unable fetch your location');
+        }
         console.log(position);
         socket.emit('createLocationMessage', {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
         });
-    }, function(err){
+    }, 
+    function (err) {
+        console.log(err);
         alert('Unable fetch your location');
+    }, 
+    {
+        timeout: 5000,
+        enableHighAccuracy: true,
+        maximumAge: Infinity
     });
 })
 

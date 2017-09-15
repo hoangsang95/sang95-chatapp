@@ -4,8 +4,15 @@
         <meta charset="utf-8">
     </head>
     <body>
-        <h1>Welcome to chat-app.</h1>
+        <ol id="messages"></ol>
+        <form id="message-form">
+            <input type="text" name="message" placeholder="Message">
+            <button>Send</button>
+        </form>
+        <button id="send-location">Send Location</button>
+        <p>Welcome to chat-app.</p>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="/js/index.js"></script>
     </body>
 </html>

@@ -31,7 +31,11 @@ io.on('connection', (socket) => {
     socket.on('createMessage', (message, callback) => {
         console.log('createMessage', message);
         io.emit('newMessage', generateMessage(message.from, message.text));
-        callback('This is from server.');
+        callback();
+    });
+
+    socket.on('user image', (message) => {
+        io.emit('user image', message);
     });
 
     socket.on('createLocationMessage', (coords) => {

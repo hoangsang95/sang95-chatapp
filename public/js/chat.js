@@ -1,11 +1,39 @@
 var socket = io();
 
 socket.on('connect', function () {
-    console.log('User connect to server.');
+    var params = jQuery.deparam(window.location.search);
+
+    socket.emit('join', params, function (err) {
+        if (err) {
+            alert(err);
+            window.location.href = '/';
+        }
+        else {
+            console.log('No error');
+        }
+    });
 });
 
 socket.on('disconnect', function () {
     console.log('Disconnected from server.');
+});
+
+socket.on('joinAndLeave', function (message) {
+    var li = jQuery('<li></li>').css('padding', '10px');
+    li.text(message);
+    jQuery('#messages').append(li);
+    if (!checkOnWindow()) {
+        jQuery('#message-audio').get(0).play();
+    }
+});
+
+socket.on('updateUserList', function (users) {
+    var ol = jQuery('<ol></ol>');
+    users.forEach(function (user) {
+        ol.append(jQuery('<li></li>').text(user));
+    });
+
+    jQuery('#users').html(ol);
 });
 
 socket.on('newMessage', function (message) {
@@ -33,6 +61,9 @@ socket.on('newMessage', function (message) {
     });
     jQuery('#messages').append(html);
     scrollBottom();
+    if (!checkOnWindow()) {
+        jQuery('#message-audio').get(0).play();
+    }
     // var li = jQuery('<li></li>');
     // var str = message.text.split(" ");
     // var arrResult = [];
@@ -61,6 +92,9 @@ socket.on('newLocationMessage', function (message) {
     });
     jQuery('#messages').append(html);
     scrollBottom();
+    if (!checkOnWindow()) {
+        jQuery('#message-audio').get(0).play();
+    }
     // var li = jQuery('<li></li>');
     // li.text(`${message.from} ${formattedTime} : `);
     // var a = jQuery('<a target="_blank">My current location</a>');
@@ -69,17 +103,20 @@ socket.on('newLocationMessage', function (message) {
     // jQuery('#messages').append(li);
 });
 
-socket.on('user image', function (message) {
+socket.on('user image', function (message, user) {
     var formattedTime = moment(message.createAt).locale('vi').format('HH:mm');
     var template = jQuery('#message-image-template').html();
     var html = Mustache.render(template, {
-        from: 'User',
+        from: user,
         text: message.imageData,
         createAt: formattedTime,
 
     });
     jQuery('#messages').append(html);
     scrollBottom();
+    if (!checkOnWindow()) {
+        jQuery('#message-audio').get(0).play();
+    }
     // var li = jQuery('<li></li>');
     // var p = jQuery('<p></p>');
     // li.text(`User ${formattedTime} : `).append('<br><br>');
@@ -96,7 +133,6 @@ jQuery('#message-form').on('submit', function (e) {
         return false;
     }
     socket.emit('createMessage', {
-        from: 'User',
         text: messageInput.val(),
     }, function () {
         messageInput.val('');
@@ -138,13 +174,11 @@ jQuery('#imageFile').on('change', function (e) {
         var jsonObject = {
             'imageData': evt.target.result
         }
-
-        // send a custom socket message to server
         socket.emit('user image', jsonObject);
     };
 
     reader.readAsDataURL(file);
-     $(this).val("");
+    $(this).val("");
 });
 
 jQuery('#send-image').on('click', function () {
@@ -160,14 +194,20 @@ function scrollBottom() {
     var messages = jQuery('#messages');
     var newMessage = messages.children('li:last-child');
 
-    var clientHeight = messages.prop('clientHeight');
-    var scrollTop = messages.prop('scrollTop');
-    var scrollHeight = messages.prop('scrollHeight');
+    var clientHeight = messages.prop('clientHeight'); // chieu cao man hinh co the thay
+    var scrollTop = messages.prop('scrollTop'); // tra ve so pixel da scroll
+    var scrollHeight = messages.prop('scrollHeight'); // tra ve toan bo height bao gom padding, khong tinh srollbar, margin
     var newMessageHeight = newMessage.innerHeight();
-    var lastMessageHeight = newMessage.prev().innerHeight();
 
-    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    if (clientHeight + scrollTop + newMessageHeight >= scrollHeight) {
         messages.scrollTop(scrollHeight);
     }
 };
+
+function checkOnWindow() {
+    if (!document.hasFocus()) {
+        return false;
+    }
+    return true;
+}
 

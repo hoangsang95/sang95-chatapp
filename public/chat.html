@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Chat | ChatApp</title>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="chat">
+    <div class="chat__sidebar">
+        <audio id="message-audio" src="/audio/message-audio.mp3"></audio>
+        <h3>People</h3>
+        <div id="users"></div>
+    </div>
+
+    <div class="chat__main">
+        <ol id="messages" class="chat__messages"></ol>
+
+        <div class="chat__footer">
+            <form id="message-form">
+                <input name="message" type="text" placeholder="Message" autofocus autocomplete="off" />
+                <button type="submit" style="display: none">Send</button>
+                <button id="send-image">Send image <i class="fa fa-picture-o" aria-hidden="true" style="margin: 0"></i></button>
+                <input type="file" name="file" id="imageFile">
+                <button id="send-location" type="button">Send Location</button>
+            </form>
+        </div>
+    </div>
+
+    <script id="message-template" type="text/template">
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createAt}}</span>
+            </div>
+            <div class="message__body">
+                {{#checkLink}}
+                <p>{{{text}}}</p>
+                {{/checkLink}} {{^checkLink}}
+                <p>{{text}}</p>
+                {{/checkLink}}
+            </div>
+        </li>
+    </script>
+
+    <script id="message-location-template" type="text/template">
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createAt}}</span>
+            </div>
+            <div class="message__body">
+                <p>
+                    <a href="{{url}}" target="_blank">My current location</a>
+                </p>
+            </div>
+        </li>
+    </script>
+
+    <script id="message-image-template" type="text/template">
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createAt}}</span>
+            </div>
+            <div class="message__body">
+                <p><img src="{{{text}}}" width="150px" height="150px" style="cursor: pointer"></p>
+            </div>
+        </li>
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/lib/jquery-3.2.1.js"></script>
+    <script src="/js/lib/moment.js"></script>
+    <script src="/js/lib/locale/vi.js"></script>
+    <script src="/js/lib/mustache.js"></script>
+    <script src="/js/lib/deparam.js"></script>
+    <script src="/js/chat.js"></script>
+</body>
+
+</html>

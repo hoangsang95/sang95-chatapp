@@ -19,7 +19,7 @@ socket.on('disconnect', function () {
 });
 
 socket.on('joinAndLeave', function (message) {
-    var li = jQuery('<li></li>').css('padding', '10px');
+    var li = jQuery('<li></li>').css({'padding': '10px', 'text-align': 'center', 'color': 'grey'});
     li.text(message);
     jQuery('#messages').append(li);
     if (!checkOnWindow()) {

@@ -7,8 +7,12 @@
   font-size: 14px;
 }
 
-ul, li {
+ul {
   list-style-position: inside;
+}
+
+li{
+  display: block;
 }
 
 h3 {
